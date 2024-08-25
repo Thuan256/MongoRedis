@@ -1,3 +1,3 @@
 exports.MongoRedis = class MongoRedis {
-
+    
 }

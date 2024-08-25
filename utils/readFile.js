@@ -11,7 +11,6 @@ exports.readFile = (path) => {
         const json = JSON.parse(jsonString)
 
         return json
-
     } catch (e) {
         log('READ_FILE', `&cError parsing JSON in file &e${path}`);
         console.error(e)
