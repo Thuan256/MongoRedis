@@ -1,0 +1,3 @@
+exports.MongoRedis = class MongoRedis {
+
+}
