@@ -1,6 +1,7 @@
 {
+    "redisPort": "256",
     "mongooseURI": "mongodb+srv://mthunz:Thuan%40256%3C3@phonguoiviet.mmdj9qi.mongodb.net",
     "databases": [
-        "pnv_databse:1609"
+        "pnv_databse"
     ]
 }

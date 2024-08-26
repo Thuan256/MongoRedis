@@ -7,11 +7,31 @@ const path = require('node:path')
 
 module.exports = {
     run: async (server) => {
-        const { mongooseURI, databases } = server.config
+        const { mongooseURI, databases, redisPort } = server.config
 
-        databases.forEach(async (database) => {
+        function connectToRedis() {
+            return new Promise((resolve, reject) => {
+                const start = Date.now()
+
+                const redis = new Redis(redisPort);
+
+                redis.on('connected', () => {
+                    log('Redis', `&aConnected to port &d${redisPort} &f[&b${Date.now() - start}ms&f]`)
+                    resolve(redis);
+                });
+
+                redis.on('error', (err) => {
+                    log('Redis', `&cConnection error!`)
+                    console.error(err);
+                    reject(err);
+                });
+            });
+        }
+
+        server.redis = await connectToRedis();
+
+        const promises = databases.map(async (dbName) => {
             try {
-                const [dbName, port] = database.split(':')
                 const uri = `${mongooseURI}/${dbName}`
 
                 log('DATABASE', `&aInitializing &d${dbName}`)
@@ -38,44 +58,15 @@ module.exports = {
                     });
                 }
 
-                /**
-                 * @returns {Promise<Redis>}
-                 */
-                function connectToRedis() {
-                    return new Promise((resolve, reject) => {
-                        const start = Date.now()
-
-                        console.log('1')
-
-                        const redisPort = 500
-                        const redis = new Redis({
-                            port: redisPort,
-                            host: '172.17.0.2'
-                        })
-
-                        redis.on('connected', () => {
-                            const portLabbel = `&d${redisPort}${redisPort === 6380 ? ' &8(default)' : ''}`
-                            log('Redis', `&aConnected to port ${portLabbel} &f[&b${Date.now() - start}ms&f]`)
-                            resolve(redis);
-                        });
-
-                        redis.on('error', (err) => {
-                            log('Redis', `&cConnection error!`)
-                            console.error(err);
-                            reject(err);
-                        });
-                    });
-                }
-
-                const [mongo, redis] = await Promise.all([connectToMongoDB(), connectToRedis()])
+                const mongoose = await connectToMongoDB()
 
                 const modelsPath = path.join(__dirname, `../models/${dbName}`)
                 const models = {}
 
-                if (fs.existsSync(modelsPath)) {
+                const modelFiles = fs.readdirSync(modelsPath, { recursive: true })
 
-                    models = fs.readdirSync(modelsPath)
-                        .filter(f => f.endsWith('.js'))
+                if (modelFiles && modelFiles?.length) {
+                    modelFiles.filter(f => f.endsWith('.js'))
                         .map(file => {
                             try {
                                 const model = require(`${modelsPath}/${file}`).initialize(server)
@@ -87,17 +78,17 @@ module.exports = {
                                 console.error(e)
                             }
                         })
-
                 } else log('MODELS', `&cNo model was found !`)
 
-                server.databases[dbName] = { mongo, redis, models }
+                server.databases[dbName] = { mongoose, models }
 
-                console.log('-'.repeat(50))
-
+                console.log()
             } catch (e) {
                 log('DATABASE', `&cInitialize failed !`)
                 console.error(e)
             }
         })
+
+        await Promise.all(promises)
     }
 } 
