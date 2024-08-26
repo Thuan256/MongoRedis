@@ -7,11 +7,10 @@ const path = require('node:path')
 
 module.exports = {
     run: async (server) => {
-        try {
-            const { mongooseURI, databases } = server.config
+        const { mongooseURI, databases } = server.config
 
-            databases.forEach(async (database) => {
-
+        databases.forEach(async (database) => {
+            try {
                 const [dbName, port] = database.split(':')
                 const uri = `${mongooseURI}/${dbName}`
 
@@ -89,10 +88,11 @@ module.exports = {
                 server.databases[dbName] = { mongo, redis, models }
 
                 console.log('-'.repeat(50))
-            })
-        } catch (e) {
-            log('DATABASE', `&cInitialize failed !`)
-            console.error(e)
-        }
+
+            } catch (e) {
+                log('DATABASE', `&cInitialize failed !`)
+                console.error(e)
+            }
+        })
     }
 } 
