@@ -37,7 +37,7 @@ module.exports = {
             try {
                 const uri = `${mongooseURI}/${dbName}`
 
-                log('DATABASE', `&aInitializing &d${dbName}`)
+                console.log('-'.repeat(50))
 
                 /**
                  * @returns {Promise<mongoose.Connection>}
@@ -83,7 +83,7 @@ module.exports = {
 
                 server.databases[dbName] = { mongoose: mongo, models }
 
-                console.log()
+                console.log('')
             } catch (e) {
                 log('DATABASE', `&cInitialize failed !`)
                 console.error(e)
