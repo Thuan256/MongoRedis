@@ -13,10 +13,7 @@ module.exports = {
             return new Promise((resolve, reject) => {
                 const start = Date.now()
 
-                const redis = new Redis({
-                    host: '172.17.0.2',
-                    port: redisPort
-                });
+                const redis = new Redis(redisPort);
 
                 redis.on('connected', () => {
                     log('Redis', `&aConnected to port &d${redisPort} &f[&b${Date.now() - start}ms&f]`)
