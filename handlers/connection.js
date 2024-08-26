@@ -30,7 +30,7 @@ module.exports = {
 
         server.redis = await connectToRedis();
 
-        const promises = databases.map(async (dbName) => {
+        for (const dbName of databases) {
             try {
                 const uri = `${mongooseURI}/${dbName}`
 
@@ -87,8 +87,7 @@ module.exports = {
                 log('DATABASE', `&cInitialize failed !`)
                 console.error(e)
             }
-        })
+        }
 
-        await Promise.all(promises)
     }
 } 
