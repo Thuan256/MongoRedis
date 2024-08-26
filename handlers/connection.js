@@ -70,7 +70,7 @@ module.exports = {
                     fs.readdirSync(modelsPath).filter(f => f.endsWith('.js'))
                         .map(file => {
                             try {
-                                const model = require(`${modelsPath}/${file}`).initialize(server)
+                                const model = require(`${modelsPath}/${file}`).initialize(mongo)
 
                                 models[model.modelName] = model
                                 log('MODELS', `&aInintialized &b${model.modelName}`)
