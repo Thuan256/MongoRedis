@@ -48,8 +48,9 @@ module.exports = {
                         console.log('1')
 
                         const redisPort = parseInt(port) || 6380
-                        const redis = new Redis(redisPort, {
-                            host: 'redis-server'
+                        const redis = new Redis({
+                            host: 'redis',
+                            port: redisPort
 
                         })
 
