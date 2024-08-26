@@ -45,6 +45,8 @@ module.exports = {
                     return new Promise((resolve, reject) => {
                         const start = Date.now()
 
+                        console.log('1')
+
                         const redisPort = parseInt(port) || 6380
                         const redis = new Redis(redisPort, {
                             host: '84.247.139.12',
