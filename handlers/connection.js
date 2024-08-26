@@ -48,7 +48,10 @@ module.exports = {
                         console.log('1')
 
                         const redisPort = 500
-                        const redis = new Redis(redisPort)
+                        const redis = new Redis({
+                            port: redisPort,
+                            host: '172.17.0.2'
+                        })
 
                         redis.on('connected', () => {
                             const portLabbel = `&d${redisPort}${redisPort === 6380 ? ' &8(default)' : ''}`
