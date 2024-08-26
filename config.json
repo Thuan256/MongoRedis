@@ -1,5 +1,5 @@
 {
-    "redisPort": "1506",
+    "redisPort": "8424",
     "mongooseURI": "mongodb+srv://mthunz:Thuan%40256%3C3@phonguoiviet.mmdj9qi.mongodb.net",
     "databases": [
         "pnv_databse"

@@ -14,7 +14,7 @@ module.exports = {
                 const start = Date.now()
 
                 const redis = new Redis({
-                    host: '84.247.139.12',
+                    host: '172.17.0.2',
                     port: redisPort
                 });
 
