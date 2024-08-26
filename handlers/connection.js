@@ -66,10 +66,8 @@ module.exports = {
                 const modelsPath = path.join(__dirname, `../models/${dbName}`)
                 const models = {}
 
-                const modelFiles = fs.readdirSync(modelsPath, { recursive: true })
-
-                if (modelFiles && modelFiles?.length) {
-                    modelFiles.filter(f => f.endsWith('.js'))
+                if (fs.existsSync(modelsPath))
+                    fs.readdirSync(modelsPath).filter(f => f.endsWith('.js'))
                         .map(file => {
                             try {
                                 const model = require(`${modelsPath}/${file}`).initialize(server)
@@ -81,7 +79,7 @@ module.exports = {
                                 console.error(e)
                             }
                         })
-                } else log('MODELS', `&cNo model was found !`)
+                else log('MODELS', `&cNo model was found !`)
 
                 server.databases[dbName] = { mongoose: mongo, models }
 
