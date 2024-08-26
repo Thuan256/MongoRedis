@@ -18,8 +18,19 @@ module.exports = {
                     port: redisPort
                 });
 
-                redis.on('connected', () => {
+                redis.on('ready', () => {
                     log('Redis', `&aConnected to port &d${redis.options.port} &f[&b${Date.now() - start}ms&f]`)
+                    resolve(redis);
+                });
+
+
+                redis.on('connect', () => {
+                    log('Redis', `&aConnected to port &d${redis.options.port} &f[&b${Date.now() - start}ms&f]_`)
+                    resolve(redis);
+                });
+
+                redis.on('connecting', () => {
+                    log('Redis', `&aConnecting to port &d${redis.options.port}`)
                     resolve(redis);
                 });
 
