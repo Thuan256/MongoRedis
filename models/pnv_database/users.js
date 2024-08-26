@@ -3,7 +3,7 @@ const { Schema, Connection } = require("mongoose");
 /**
  * @param {Connection} connection
  */
-exports.inintialize = (connection) => {
+exports.initialize = (connection) => {
     const UserSchema = new Schema({
         id: { type: String, require: true },
         bal: { type: Number, default: 0 },

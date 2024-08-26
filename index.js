@@ -8,6 +8,8 @@ const server = new class Server {
     constructor() {
         const configPath = path.join(__dirname, './config.json')
         this.config = readFile(configPath)
+
+        this.databases = {}
     }
 }();
 
