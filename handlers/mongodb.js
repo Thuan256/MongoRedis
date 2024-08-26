@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { log } = require('my-utils');
 const fs = require('node:fs')
 const path = require('node:path')
 
@@ -10,10 +11,11 @@ module.exports = {
             databases.forEach(async (database) => {
                 const connection = mongoose.createConnection(`${mongooseURI}/${database}`)
 
-                const modelsPath = path.join(__dirname, '')
+                const modelsPath = path.join(__dirname, `../models/${database}`)
 
-                if (fs.existsSync())
+                if (fs.existsSync()) {
 
+                } else log('MODELS', `&cNo model was found for database &d${database}`)
 
             })
 
@@ -25,4 +27,4 @@ module.exports = {
             console.error(e)
         }
     }
-} 112
+} 
