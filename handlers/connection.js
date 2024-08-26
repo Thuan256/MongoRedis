@@ -45,11 +45,13 @@ module.exports = {
                     return new Promise((resolve, reject) => {
                         const start = Date.now()
 
-                        const redisPort = parseInt(port) || 6379
-                        const redis = new Redis(redisPort)
+                        const redisPort = parseInt(port) || 6380
+                        const redis = new Redis(redisPort, {
+                            host: 'localhost'
+                        })
 
                         redis.on('connected', () => {
-                            const portLabbel = `&d${redisPort}${redisPort === 6379 ? ' &8(default)' : ''}`
+                            const portLabbel = `&d${redisPort}${redisPort === 6380 ? ' &8(default)' : ''}`
                             log('Redis', `&aConnected to port ${portLabbel} &f[&b${Date.now() - start}ms&f]`)
                             resolve(redis);
                         });
