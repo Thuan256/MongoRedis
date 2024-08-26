@@ -23,17 +23,6 @@ module.exports = {
                     resolve(redis);
                 });
 
-
-                redis.on('connect', () => {
-                    log('Redis', `&aConnected to port &d${redis.options.port} &f[&b${Date.now() - start}ms&f]_`)
-                    resolve(redis);
-                });
-
-                redis.on('connecting', () => {
-                    log('Redis', `&aConnecting to port &d${redis.options.port}`)
-                    resolve(redis);
-                });
-
                 redis.on('error', (err) => {
                     log('Redis', `&cConnection error!`)
                     console.error(err);
@@ -72,7 +61,7 @@ module.exports = {
                     });
                 }
 
-                const mongoose = await connectToMongoDB()
+                const mongo = await connectToMongoDB()
 
                 const modelsPath = path.join(__dirname, `../models/${dbName}`)
                 const models = {}
@@ -94,7 +83,7 @@ module.exports = {
                         })
                 } else log('MODELS', `&cNo model was found !`)
 
-                server.databases[dbName] = { mongoose, models }
+                server.databases[dbName] = { mongoose: mongo, models }
 
                 console.log()
             } catch (e) {
