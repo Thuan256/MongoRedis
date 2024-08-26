@@ -4,7 +4,7 @@ const fs = require('node:fs')
 const line = '-'.repeat(50)
 
 const server = new class Server {
-    
+
     constructor() {
         const configPath = path.join(__dirname, './config.json')
         this.config = readFile(configPath)
@@ -16,7 +16,6 @@ const server = new class Server {
 (async () => {
 
     log('SERVER', '&aInintializing...')
-    console.log(line)
 
     const start = Date.now()
 
@@ -36,12 +35,13 @@ const server = new class Server {
             }
     });
 
+    async function load() {
+        for (const handler of handlers) {
+            await handler.run(server)
+        }
+    }
 
-    const promises = handlers.map(async (handler) => {
-        await handler.run(server)
-    })
-
-    await Promise.all(promises)
+    await load()
 
     console.log(line)
     log('SERVER', `&aInintialized in &b${Date.now() - start}ms`);

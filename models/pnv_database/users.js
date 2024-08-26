@@ -1,7 +1,8 @@
-const { Schema, Connection } = require("mongoose");
+const { Schema, Connection, Model } = require("mongoose");
 
 /**
  * @param {Connection} connection
+ * @returns {Model}
  */
 exports.initialize = (connection) => {
     const UserSchema = new Schema({

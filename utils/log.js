@@ -20,7 +20,8 @@ exports.log = (name, message) => {
             ['d', '35'],
             ['r', '0'],
             ['l', '1'],
-            ['u', '4']
+            ['u', '4'],
+            ['8', '38']
         ];
 
         color_codes.forEach(([a, b]) => {
