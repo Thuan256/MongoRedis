@@ -47,7 +47,7 @@ module.exports = {
 
                         const redisPort = parseInt(port) || 6380
                         const redis = new Redis(redisPort, {
-                            host: 'localhost'
+                            host: '84.247.139.12'
                         })
 
                         redis.on('connected', () => {

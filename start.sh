@@ -3,7 +3,7 @@ clear
 
 while true
 do
-  git checkout HEAD^ .
+  git reset --hard
   git pull
   node index.js
   sleep 5
