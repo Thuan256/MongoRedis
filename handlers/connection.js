@@ -19,8 +19,8 @@ module.exports = {
             log('SSH', `&aConnected to &d${ssh.host} &f[&b${Date.now() - start}ms&f]`)
 
         } catch (e) {
-            log('SSH', `&aConnection error`)
-            console.error(e)
+            log('SSH', `&cConnection error`)
+            throw new Error(e.message)
         }
 
         for (const database of databases) {

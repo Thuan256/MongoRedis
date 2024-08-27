@@ -1,7 +1,11 @@
 {
-    "redisPort": "8424",
+    "ssh": {
+        "host": "84.247.139.12",
+        "username": "root",
+        "password": "PNV169@contabo.com"
+    },
     "mongooseURI": "mongodb+srv://mthunz:Thuan%40256%3C3@phonguoiviet.mmdj9qi.mongodb.net",
     "databases": [
-        "pnv_database"
+        "pnv_database:1609"
     ]
 }
