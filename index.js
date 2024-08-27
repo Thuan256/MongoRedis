@@ -10,7 +10,6 @@ const server = new class Server {
         this.config = readFile(configPath)
 
         this.databases = {}
-        this.redis = null
     }
 }();
 

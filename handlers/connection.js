@@ -23,30 +23,6 @@ module.exports = {
             console.error(e)
         }
 
-        function connectToRedis() {
-            return new Promise((resolve, reject) => {
-                const start = Date.now()
-
-                const redis = new Redis({
-                    host: '84.247.139.12',
-                    port: redisPort
-                });
-
-                redis.on('ready', () => {
-                    log('Redis', `&aConnected to port &d${redis.options.port} &f[&b${Date.now() - start}ms&f]`)
-                    resolve(redis);
-                });
-
-                redis.on('error', (err) => {
-                    log('Redis', `&cConnection error!`)
-                    console.error(err);
-                    reject(err);
-                });
-            });
-        }
-
-        server.redis = await connectToRedis();
-
         for (const database of databases) {
             try {
 
