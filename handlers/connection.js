@@ -43,7 +43,7 @@ module.exports = {
                 const s = Date.now()
                 const commandResult = await SSH.execCommand(`redis-server --port ${port} --bind 0.0.0.0 --protected-mode no --daemonize yes --databases ${dbSize}`)
                 if (commandResult.code === 0) {
-                    log('SSH', `&aStarted &eredis-server &awith &d${dbSize} databases &aon port &d${port} &f[&b${Date.now() - s}ms&f]`)
+                    log('SSH', `&aStarted &eredis-server &awith &d${dbSize} &adatabases on port &d${port} &f[&b${Date.now() - s}ms&f]`)
                 } else {
                     log('SSH', `&cFailed to start &bredis-server`)
                     throw new Error(commandResult.stderr)
