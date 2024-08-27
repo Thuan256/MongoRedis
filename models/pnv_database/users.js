@@ -89,5 +89,5 @@ exports.initialize = (connection) => {
         thptqg: { type: String }
     }, { strict: true });
 
-    return connection.model('user', UserSchema)
+    return connection.model('users', UserSchema)
 }

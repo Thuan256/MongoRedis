@@ -4,7 +4,6 @@ const fs = require('node:fs')
 const line = '-'.repeat(50)
 
 const server = new class Server {
-
     constructor() {
         const configPath = path.join(__dirname, './config.json')
         this.config = readFile(configPath)
@@ -21,7 +20,7 @@ const server = new class Server {
 
     const handlers = [];
 
-    fs.readdirSync('./handlers').forEach(async (handler) => {
+    fs.readdirSync('./handlers').forEach((handler) => {
 
         if (handler.endsWith('.js')) {
             handlers.push(require(`./handlers/${handler}`))
