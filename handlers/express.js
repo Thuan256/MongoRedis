@@ -1,4 +1,5 @@
 const express = require('express');
+const { log } = require('my-utils')
 
 module.exports = {
     run: async (server) => {
@@ -6,15 +7,28 @@ module.exports = {
         const app = express();
         app.use(express.json());
 
-        app.get('/:dbName/:modelName/:s_key/:s_value', async (req, res) => {
-            const { dbName, modelName, s_key, s_value } = req.params;
+        app.get('/:dbName/:modelName/:key', async (req, res) => {
+            const { dbName, modelName, key } = req.params;
 
-            const redis = server.databases[dbName]?.redis
+            const db = server.databases[dbName]
+            if (!db) log('DATABASE', `&cCan not found database &d${dbName}`)
+
+            if (db) {
+                const { model, redis } = db.dbs[modelName];
+
+                // if (!model) 
+
+            } else {
+                log('DATABASE', `&cCan not found database &d${dbName}`)
+                res.status(404).json({ error_code: 'NO_DATABASE' })
+            }
+
+
 
             if (redis) {
                 try {
 
-                    
+
 
                     const data = await redis.get(`${modelName}:${id}`)
                     res.send(data)

@@ -108,7 +108,7 @@ module.exports = {
                     await Promise.all(promises)
                 } else log('DATABASE', `&cNo model was found !`)
 
-                server.databases[dbName] = { mongo, databases: dbs }
+                server.databases[dbName] = { mongo, dbs }
             } catch (e) {
                 log('DATABASE', `&cInitialize failed !`)
                 console.error(e)
