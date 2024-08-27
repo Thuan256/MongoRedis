@@ -37,7 +37,7 @@ module.exports = {
                 const s = Date.now()
                 const commandResult = await SSH.execCommand(`redis-server --port ${port} --bind 0.0.0.0 --protected-mode no --daemonize yes`)
                 if (commandResult.code === 0) {
-                    log('SSH', `&aStarted &bredis-server &aon port &d${port} &f[&b${Date.now() - s}ms&f]`)
+                    log('SSH', `&aStarted &eredis-server &aon port &d${port} &f[&b${Date.now() - s}ms&f]`)
                 } else {
                     log('SSH', `&cFailed to start &bredis-server`)
                     throw new Error(commandResult.stderr)
@@ -102,7 +102,7 @@ module.exports = {
                                 models[model.modelName] = model
                                 log('MODELS', `&aInintialized &b${model.modelName}`)
                             } catch (e) {
-                                log('MODELS', `&cCan not inintialize &b${file}`)
+                                log('MODELS', `&cCan not inintialize &e${file}`)
                                 console.error(e)
                             }
                         })
