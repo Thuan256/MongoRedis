@@ -1,13 +1,27 @@
 const mongoose = require('mongoose');
 const { Redis } = require('ioredis')
-const { log } = require('my-utils');
-const fs = require('node:fs')
-const path = require('node:path')
+const { NodeSSH } = require('node-ssh');
 
+const fs = require('node:fs')
+const path = require('node:path');
+
+const { log } = require('my-utils');
 
 module.exports = {
     run: async (server) => {
-        const { mongooseURI, databases, redisPort } = server.config
+
+        const { mongooseURI, databases, ssh } = server.config
+        let SSH
+
+        try {
+            const start = Date.now()
+            SSH = await new NodeSSH().connect(ssh)
+            log('SSH', `&aConnected to &d${ssh.host} &f[&b${Date.now() - start}ms&f]`)
+
+        } catch (e) {
+            log('SSH', `&aConnection error`)
+            console.error(e)
+        }
 
         function connectToRedis() {
             return new Promise((resolve, reject) => {
@@ -33,11 +47,48 @@ module.exports = {
 
         server.redis = await connectToRedis();
 
-        for (const dbName of databases) {
+        for (const database of databases) {
             try {
+
+                let [dbName, port] = database.split(':')
+                port ??= 6380
+
                 const uri = `${mongooseURI}/${dbName}`
 
                 console.log('-'.repeat(50))
+
+                //start redis-server
+                const s = Date.now()
+                const commandResult = await SSH.execCommand(`redis-server --port ${port} --bind 0.0.0.0 --protected-mode no --daemonize yes`)
+                if (commandResult.code === 0) {
+                    log('SSH', `&aStarted &bredis-server &aon port &${port} &f[${Date.now() - s}&f]`)
+                } else {
+                    log('SSH', `&cFailed to start &bredis-server`)
+                    throw new Error(commandResult.stderr)
+                }
+
+                //connect to redis
+                /**
+                 * @returns {Promise<Redis>}
+                 */
+                function connectToRedis() {
+                    return new Promise((resolve, reject) => {
+                        const start = Date.now()
+
+                        const redis = new Redis(port, { host: ssh.host });
+
+                        redis.on('ready', () => {
+                            log('Redis', `&aConnected to port &d${redis.options.port} &f[&b${Date.now() - start}ms&f]`)
+                            resolve(redis);
+                        });
+
+                        redis.on('error', (err) => {
+                            log('Redis', `&cConnection error!`)
+                            console.error(err);
+                            reject(err);
+                        });
+                    });
+                }
 
                 /**
                  * @returns {Promise<mongoose.Connection>}
@@ -61,7 +112,7 @@ module.exports = {
                     });
                 }
 
-                const mongo = await connectToMongoDB()
+                const [mongo, redis] = await Promise.all([connectToMongoDB(), connectToRedis()])
 
                 const modelsPath = path.join(__dirname, `../models/${dbName}`)
                 const models = {}
@@ -81,7 +132,7 @@ module.exports = {
                         })
                 else log('MODELS', `&cNo model was found !`)
 
-                server.databases[dbName] = { mongoose: mongo, models }
+                server.databases[dbName] = { mongo, redis, models }
 
                 console.log('')
             } catch (e) {
