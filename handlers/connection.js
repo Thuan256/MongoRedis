@@ -76,7 +76,10 @@ module.exports = {
                 //intitalize databases
                 if (dbSize) {
                     const promises = models.map(async (file, index) => {
-                        const model = require(`${modelsPath}/${file}`).initialize(mongo)
+                        const md = require(`${modelsPath}/${file}`)
+                        const model = md.initialize(mongo)
+                        const key = md.key
+
                         const { modelName } = model
 
                         //connect to redis
@@ -101,7 +104,7 @@ module.exports = {
                                 });
                             })()
 
-                        dbs[modelName] = { model, redis }
+                        dbs[modelName] = { key, model, redis }
                         log('DATABASE', `&aInintialized &e${modelName} &f- &d${redis.options.db}`)
                     })
 
