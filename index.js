@@ -36,7 +36,7 @@ const server = new class Server {
 
     async function load() {
         for (const handler of handlers) {
-            await handler.run(server)
+            if (handler?.run) await handler?.run(server)
         }
     }
 

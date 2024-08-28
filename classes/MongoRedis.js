@@ -1,3 +1,0 @@
-exports.MongoRedis = class MongoRedis {
-    
-}
