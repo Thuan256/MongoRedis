@@ -4,7 +4,7 @@ const fs = require('node:fs')
 const line = '-'.repeat(50)
 const { Server } = require('my-classes')
 
-const server = new Server()
+const server = new Server();
 
 (async () => {
 
