@@ -4,6 +4,7 @@ const utils = require('my-utils')
 
 exports.Server = class Server extends EventEmitter {
     constructor() {
+        super()
         this.databases = {}
     }
 
