@@ -4,42 +4,22 @@ const fs = require('node:fs')
 
 module.exports = {
     /**
-     * @param {import('../classes/Server')}
+     * @param {import('../classes/Server')} server
      */
     run: async (server) => {
 
         const app = express();
         app.use(express.json());
 
-        const resPath = './express'
-        const responses = fs.readdirSync(resPath)
+        fs.readdirSync('./express')
             .filter(f => f.endsWith('.js'))
-            .map(file => require(`${resPath}/${file}`))
-            .forEach(response => {
-                const { path, run } = response 
+            .forEach(file => {
+                const { method, path, run } = require(`../express/${file}`)
+                app[method](path, async (req, res) => await run(req, res, server))
             })
 
-        responses.forEach()
-
         app.get('get/:dbName/:modelName/:query', async (req, res) => {
-            const { dbName, modelName, query } = req.params;
 
-            const db = server.databases[dbName]
-
-            if (db) {
-                const { redis } = db.dbs[modelName];
-
-                if (!redis) {
-                    log('DATABASE', `&cRedis &d${dbName}&f/&d${modelName} &cdoesn't exist !`)
-                    res.status(404).json({ error_code: 'NO_REDIS' })
-                } else {
-                    const data = await redis.get(query)
-                    res.send(data)
-                }
-            } else {
-                log('DATABASE', `&cCan not find database &d${dbName}`)
-                res.status(404).json({ error_code: 'NO_DATABASE' })
-            }
         });
 
         app.post('set/:dbName/:modelName/:query', async (req, res) => {
