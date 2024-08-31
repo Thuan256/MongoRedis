@@ -18,10 +18,10 @@ module.exports = {
             const dbPath = `&d${dbName}&f/&d${modelName}`
 
             if (!model) {
-                log('DATABASE', `&cModel ${dbPath} &cdoesn't exist !`)
+                server.utils.log('DATABASE', `&cModel ${dbPath} &cdoesn't exist !`)
                 res.status(404).json({ error_code: 'NO_MODEL' })
             } else if (!redis) {
-                log('DATABASE', `&cRedis ${dbPath} &cdoesn't exist !`)
+                server.utils.log('DATABASE', `&cRedis ${dbPath} &cdoesn't exist !`)
                 res.status(404).json({ error_code: 'NO_REDIS' })
             } else {
                 try {
@@ -34,15 +34,15 @@ module.exports = {
 
                     res.send(data)
 
-                    log('DATABASE', `&aUpdated ${dataPath} &f[&b${Date.now() - s}ms&f]`)
+                    server.utils.log('DATABASE', `&aUpdated ${dataPath} &f[&b${Date.now() - s}ms&f]`)
                 } catch (e) {
-                    log('DATABASE', `&cUpdate ${dataPath} &cfailed`)
+                    server.utils.log('DATABASE', `&cUpdate ${dataPath} &cfailed`)
                     res.status(500).json({ error_code: 'UPDATE_ERROR' })
                     console.error(e)
                 }
             }
         } else {
-            log('DATABASE', `&cCan not find database &d${dbName}`)
+            server.utils.log('DATABASE', `&cCan not find database &d${dbName}`)
             res.status(404).json({ error_code: 'NO_DATABASE' })
         }
     }

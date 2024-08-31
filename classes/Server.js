@@ -4,13 +4,15 @@ const utils = require('my-utils')
 
 exports.Server = class Server extends EventEmitter {
     constructor() {
-        const configPath = path.join(__dirname, '../config.json')
-        this.config = utils.readFile(configPath)
-
         this.databases = {}
     }
 
     get utils() {
         return utils
+    }
+
+    get config() {
+        const configPath = path.join(__dirname, '../config.json')
+        return utils.readFile(configPath)
     }
 }

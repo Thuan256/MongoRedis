@@ -8,41 +8,70 @@ module.exports = {
      * @param {import('my-classes').Server} server 
      */
     run: async (req, res, server) => {
-        const { dbName, modelName, query } = req.params;
-        const data = req.body;
+        const { dbName, modelName } = req.params
+        const { data } = req.body
+
+        if (!Array.isArray(data)) {
+            server.utils.log('REQUEST', `&cInvalid data type! Received &d${typeof data}`)
+            res.status(400).json({ error_code: 'INVALID_DATA' })
+        }
 
         const db = server.databases[dbName]
 
         if (db) {
-            const { redis, model, key } = db.dbs[modelName];
+            const { redis, model, key } = db.dbs[modelName]
             const dbPath = `&d${dbName}&f/&d${modelName}`
 
             if (!model) {
-                log('DATABASE', `&cModel ${dbPath} &cdoesn't exist !`)
+                server.utils.log('DATABASE', `&cModel ${dbPath} &cdoesn't exist !`)
                 res.status(404).json({ error_code: 'NO_MODEL' })
             } else if (!redis) {
-                log('DATABASE', `&cRedis ${dbPath} &cdoesn't exist !`)
+                server.utils.log('DATABASE', `&cRedis ${dbPath} &cdoesn't exist !`)
                 res.status(404).json({ error_code: 'NO_REDIS' })
             } else {
+                const s = Date.now()
+
+                const { batchSize } = server.config.redis
+                const bulkOps = [];
+                const redisCommands = [];
+
+                data.forEach(([query, updateData]) => {
+                    bulkOps.push({
+                        updateOne: {
+                            filter: { [key]: query },
+                            update: { $set: updateData },
+                            upsert: true
+                        }
+                    });
+
+                    const redisValue = JSON.stringify(updateData);
+                    redisCommands.push(['set', query, redisValue]);
+                });
+
                 try {
-                    const s = Date.now()
+                    const mongoResult = model.bulkWrite(mongoOperations)
+                    const redisResults = (async () => {
+                        const results = [];
+                        for (let i = 0; i < redisCommands.length; i += batchSize) {
+                            const batch = redisCommands.slice(i, i + batchSize);
+                            const batchResults = await redis.pipeline(batch).exec();
+                            results.push(...batchResults);
+                        }
+                        return results;
+                    })()
 
-                    const dataPath = `${dbPath}&f/&d${key}:${query}`
+                    await Promise.all([mongoResult, redisResults])
+                    res.json({ mongo: mongoResult, redis: redisResults });
 
-                    await redis.set(query, data)
-                    await model.findOneAndUpdate({ [key]: query }, data)
-
-                    res.send(data)
-
-                    log('DATABASE', `&aUpdated ${dataPath} &f[&b${Date.now() - s}ms&f]`)
+                    server.utils.log('DATABASE', `&aBulk-Updated &d${data.length} &aat ${dbPath} &f[&b${Date.now() - s}ms&f]`)
                 } catch (e) {
-                    log('DATABASE', `&cUpdate ${dataPath} &cfailed`)
+                    server.utils.log('DATABASE', `&cBulk-Update ${dbPath} &cfailed`)
                     res.status(500).json({ error_code: 'UPDATE_ERROR' })
                     console.error(e)
                 }
             }
         } else {
-            log('DATABASE', `&cCan not find database &d${dbName}`)
+            server.utils.log('DATABASE', `&cCan not find database &d${dbName}`)
             res.status(404).json({ error_code: 'NO_DATABASE' })
         }
     }

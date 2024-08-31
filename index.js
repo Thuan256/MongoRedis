@@ -2,15 +2,9 @@ const { readFile, log } = require("my-utils")
 const path = require('node:path')
 const fs = require('node:fs')
 const line = '-'.repeat(50)
+const { Server } = require('my-classes')
 
-const server = new class Server {
-    constructor() {
-        const configPath = path.join(__dirname, './config.json')
-        this.config = readFile(configPath)
-
-        this.databases = {}
-    }
-}();
+const server = new Server()
 
 (async () => {
 

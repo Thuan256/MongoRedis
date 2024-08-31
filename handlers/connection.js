@@ -8,6 +8,9 @@ const path = require('node:path');
 const { log } = require('my-utils');
 
 module.exports = {
+    /**
+     * @param {import('my-classes').Server}
+     */
     run: async (server) => {
 
         const { mongooseURI, databases, ssh } = server.config
